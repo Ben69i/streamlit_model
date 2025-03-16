@@ -62,6 +62,7 @@ options = {
     "USDC-USD": "💵 USDC",
 }
 
+
 st.cache_resource(show_spinner="Loading model ...")
 def modeling():
     model_input = st.session_state.model
@@ -126,6 +127,10 @@ with tab1:
         st.session_state.ticker = ticker_symbol  # Set the ticker to session state
         if st.form_submit_button("Submit"):
             st.session_state.data = ticker()
+            if st.session_state.data.empty:
+                st.error("Ticker not found!")
+            else:
+                st.success("Data Loaded Successfully!")
 
 with tab2:
     with st.form("model_form"):

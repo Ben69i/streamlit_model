@@ -119,13 +119,7 @@ def model_train():
             plt.clf()
         except Exception as e:
             st.error(e)
-    if col2.button("Save model"):
-        try:
-            pickle.dump(m, open(f"./{model_input}{st.session_state.no_of_saving}.pkl", "wb"))
-            st.session_state.no_of_saving += 1
-            st.balloons()
-        except Exception as e:
-            st.error(e)
+    col2.download_button("Download model", data=pickle.dumps(m), file_name=f"{model_input}.pkl", mime="application/octet-stream")
     return x_test, preds, center
 
 
