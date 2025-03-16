@@ -8,11 +8,14 @@ import pandas as pd
 import pickle, os
 from yellowbrick.cluster import KElbowVisualizer
 
+from pages.Regress import modeling
+
 sb.set()
 st.set_page_config(
     page_title="Experimental",
     page_icon="🧪"
 )
+
 
 keys = st.session_state.keys()
 if any(i not in keys for i in
@@ -73,6 +76,12 @@ def poof(data, y, centers):
     ax.scatter(data[:, :1], data[:, 1:2], c=y, cmap="inferno")
     ax.scatter(centers.T[0], centers.T[1])
     return fig
+
+
+if "first_time" not in st.session_state:
+    st.session_state.first_time = False
+    st.session_state.xdata, st.session_state.xy, st.session_state.xcenters = generate_df()
+    modeling()
 
 
 st.cache_resource(show_spinner="Loading model ...")
