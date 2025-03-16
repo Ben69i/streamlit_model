@@ -1,4 +1,4 @@
-import psycopg
+# import psycopg
 from dotenv import load_dotenv
 import streamlit_authenticator as stauth
 import streamlit as st
@@ -7,33 +7,33 @@ from streamlit_extras.let_it_rain import rain
 from streamlit_extras.switch_page_button import switch_page
 
 # Load environment variables from .env
-load_dotenv()
-
-# Fetch variables
-USER = os.getenv("db_user")
-PASSWORD = os.getenv("db_password")
-HOST = os.getenv("db_host")
-PORT = os.getenv("db_port")
-DBNAME = os.getenv("db_dbname")
-
-st.cache_resource(show_spinner="Connecting to database...",ttl=600)
-def connect_db():
-    # Connect to the database
-
-    try:
-        connection = psycopg.connect(
-            user=USER,
-            password=PASSWORD,
-            host=HOST,
-            port=PORT,
-            dbname=DBNAME
-        )
-        print("Connection successful!")
-
-        return connection
-
-    except Exception as e:
-        pass
+# load_dotenv()
+#
+# # Fetch variables
+# USER = os.getenv("db_user")
+# PASSWORD = os.getenv("db_password")
+# HOST = os.getenv("db_host")
+# PORT = os.getenv("db_port")
+# DBNAME = os.getenv("db_dbname")
+#
+# st.cache_resource(show_spinner="Connecting to database...",ttl=600)
+# def connect_db():
+#     # Connect to the database
+#
+#     try:
+#         connection = psycopg.connect(
+#             user=USER,
+#             password=PASSWORD,
+#             host=HOST,
+#             port=PORT,
+#             dbname=DBNAME
+#         )
+#         print("Connection successful!")
+#
+#         return connection
+#
+#     except Exception as e:
+#         pass
 
 
 # c=connect_db()
