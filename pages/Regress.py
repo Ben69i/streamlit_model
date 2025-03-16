@@ -163,3 +163,5 @@ with tab2:
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
     st.plotly_chart(fig, use_container_width=True)
     st.table(st.session_state.days_ahead_prices)
+
+st.sidebar.button("clear cache",on_click=lambda:st.cache_data.clear())

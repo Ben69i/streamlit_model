@@ -169,3 +169,5 @@ with Tab2:
         st.form_submit_button(type="secondary")
 
     st.pyplot(fig=poof(*model_train()))
+
+st.sidebar.button("clear cache",on_click=lambda:st.cache_data.clear())

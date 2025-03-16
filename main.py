@@ -58,4 +58,5 @@ if st.button("Go to experimental",type="secondary"):
 if st.button("Go to regression",type="secondary"):
     switch_page("Regress")
 
+st.sidebar.button("clear cache",on_click=lambda:st.cache_data.clear())
 
