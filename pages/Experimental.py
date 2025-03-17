@@ -36,8 +36,6 @@ if any(i not in keys for i in
 
 
 st.cache_resource(show_spinner="Loading normalizer")
-
-
 def fixer_preprocessing():
     try:
         fixer = getattr(sklearn.preprocessing, st.session_state.data_preprocessing)
@@ -47,8 +45,6 @@ def fixer_preprocessing():
 
 
 st.cache_data(show_spinner="Creating data ...")
-
-
 def generate_df():
     n_samples = st.session_state.n_samples
     n_features = st.session_state.n_features
@@ -67,8 +63,6 @@ def generate_df():
 
 
 st.cache_data()
-
-
 def poof(data, y, centers):
     fig, ax = plt.subplots()
     ax.set_title(
@@ -85,8 +79,6 @@ if "first_time" not in st.session_state:
 
 
 st.cache_resource(show_spinner="Loading model ...")
-
-
 def model_train():
     data = st.session_state.xdata
     y = st.session_state.xy

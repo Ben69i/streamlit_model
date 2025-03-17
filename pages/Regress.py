@@ -30,7 +30,7 @@ if any(key not in st.session_state.keys() for key in ["preds","ticker","data","b
     st.session_state.batch_size = 1
 
 
-
+st.cache_data(show_spinner="Loading data ...")
 def ticker():
     data = yf.Ticker(st.session_state.ticker).history(period="max")
     data = pd.DataFrame(data, columns=["Close", "Open", "Volume"])
