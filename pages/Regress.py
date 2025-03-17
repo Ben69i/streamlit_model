@@ -19,10 +19,16 @@ from warnings import filterwarnings
 filterwarnings('ignore')
 sb.set(style="darkgrid")
 
-if "ticker" not in st.session_state or "preds" not in st.session_state or "days_ahead_prices" not in st.session_state or "data" not in st.session_state:
-    st.session_state.preds = 1
+st.set_page_config(
+    page_title="Regression",
+)
+
+if any(key not in st.session_state.keys() for key in ["preds","ticker","data","batch_size"]):
+    st.session_state.preds = None
     st.session_state.ticker = "BTC-USD"
     st.session_state.data = 1
+    st.session_state.batch_size = 1
+
 
 
 def ticker():
@@ -144,24 +150,25 @@ with tab2:
         col2.number_input("Days ahead", min_value=1, max_value=150, value=1, step=1, key="days_ahead",help="The longer periods less accurate predictions")
         if st.form_submit_button("Submit", on_click=modeling):
             st.session_state.preds, st.session_state.days_ahead_prices = modeling()
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=st.session_state.data.index,y=st.session_state.data["Mid"], mode="lines",
-                             name=f"{st.session_state.ticker}"))
-    fig.add_trace(
-        go.Scatter(x=st.session_state.preds.index,y=st.session_state.preds.preds, mode="lines", name="Validation"))
+    if st.session_state.preds is not None:
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=st.session_state.data.index,y=st.session_state.data["Mid"], mode="lines",
+                                 name=f"{st.session_state.ticker}"))
+        fig.add_trace(
+            go.Scatter(x=st.session_state.preds.index,y=st.session_state.preds.preds, mode="lines", name="Validation"))
 
-    fig.add_trace(
-        go.Scatter(x=st.session_state.days_ahead_prices.index,y=st.session_state.days_ahead_prices[0], mode="lines",
-                   name="Future Predictions", line=dict(color='cyan', width=3)))
-    fig.update_layout(
-        title=f"Data for {st.session_state.get('ticker', 'Unknown')}",
-        xaxis_title="Time",
-        yaxis_title="Price",
-        template="plotly_white",
-        showlegend=True,
-        hovermode="x unified",
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
-    st.plotly_chart(fig, use_container_width=True)
-    st.table(st.session_state.days_ahead_prices)
+        fig.add_trace(
+            go.Scatter(x=st.session_state.days_ahead_prices.index,y=st.session_state.days_ahead_prices[0], mode="lines",
+                       name="Future Predictions", line=dict(color='cyan', width=3)))
+        fig.update_layout(
+            title=f"Data for {st.session_state.get('ticker', 'Unknown')}",
+            xaxis_title="Time",
+            yaxis_title="Price",
+            template="plotly_white",
+            showlegend=True,
+            hovermode="x unified",
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
+        st.plotly_chart(fig, use_container_width=True)
+        st.table(st.session_state.days_ahead_prices)
 
 st.sidebar.button("clear cache",on_click=lambda:st.cache_data.clear())

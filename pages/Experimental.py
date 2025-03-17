@@ -27,13 +27,14 @@ if any(i not in keys for i in
     st.session_state.pred_center = 2
     st.session_state.xdata = 2
     st.session_state.xy = 2
-    st.session_state.model = 2
+    st.session_state.model = None
     st.session_state.centers = 2
     st.session_state.centers_std = 1
     st.session_state.seed = 42
     st.session_state.lock_seed = True
     st.session_state.data_preprocessing = None
     st.session_state.no_of_saving = 0
+
 
 st.cache_resource(show_spinner="Loading normalizer")
 
@@ -154,7 +155,8 @@ with Tab1:
 
         if st.form_submit_button(type="secondary"):
             st.session_state.xdata, st.session_state.xy, st.session_state.xcenters = generate_df()
-    st.pyplot(fig=poof(st.session_state.xdata, st.session_state.xy, st.session_state.xcenters))
+    if st.session_state.data_preprocessing is not None:
+        st.pyplot(fig=poof(st.session_state.xdata, st.session_state.xy, st.session_state.xcenters))
 
 with Tab2:
     st.header("Model Training", divider="grey", help="Generate Data for model training")
@@ -167,7 +169,7 @@ with Tab2:
         col2.number_input("pred_centers", key="pred_center", value=2)
 
         st.form_submit_button(type="secondary")
-
-    st.pyplot(fig=poof(*model_train()))
+    if st.session_state.data_preprocessing is not None:
+        st.pyplot(fig=poof(*model_train()))
 
 st.sidebar.button("clear cache",on_click=lambda:st.cache_data.clear())
