@@ -9,7 +9,6 @@ from sklearn.svm import SVR
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.ensemble import ExtraTreesRegressor
-from sklearn.ensemble import VotingRegressor
 from sklearn.ensemble import HistGradientBoostingRegressor
 import seaborn as sb
 import numpy as np
@@ -23,11 +22,12 @@ st.set_page_config(
     page_title="Regression",
 )
 
-if any(key not in st.session_state.keys() for key in ["preds","ticker","data","batch_size"]):
+if any(key not in st.session_state.keys() for key in ["preds","ticker","data","batch_size","tab3_seed"]):
     st.session_state.preds = None
     st.session_state.ticker = "BTC-USD"
     st.session_state.data = 1
-    st.session_state.batch_size = 1
+    st.session_state.batch_size = 30
+    st.session_state.tab3_seed = None
 
 
 st.cache_data(show_spinner="Loading data ...")
@@ -86,8 +86,6 @@ def modeling():
             final_model = KNeighborsRegressor()
         elif model_input == "Extra Trees Regression":
             final_model = ExtraTreesRegressor()
-        elif model_input == "Voting Regression":
-            final_model = VotingRegressor()
         elif model_input == "HistGradientBoosting Regression":
             final_model = HistGradientBoostingRegressor()
         elif model_input == "MLPRegressor":
@@ -107,6 +105,9 @@ def modeling():
         data = data.dropna()
         x_train, x_test, y_train, y_test = train_test_split(data["x"].tolist(), data["Mid"], shuffle=False,
                                                             test_size=0.1)
+        if st.session_state.tab3_seed is not None:
+            seed = st.session_state.tab3_seed
+            final_model.random_state=seed
         final_model.fit(x_train, y_train)
         preds = final_model.predict(x_test)
         days_ahead = pd.date_range(start=data.index[-1], periods=st.session_state.days_ahead, freq="1D")
@@ -142,12 +143,11 @@ with tab2:
     with st.form("model_form"):
         col1, col2 = st.columns(2)
         col1.selectbox("Select Model", ["Linear Regression", "Support Vector Regression", "Decision Tree Regression",
-                                        "KNeighbors Regression",
-                                        "Extra Trees Regression", "Voting Regression",
+                                        "KNeighbors Regression","Extra Trees Regression",
                                         "HistGradientBoosting Regression", "MLPRegressor"],
                        key="model")
-        col2.number_input("Batch size", min_value=1, max_value=31, value=1, step=1, key="batch_size",help="more stable predictions with higher batch size")
-        col2.number_input("Days ahead", min_value=1, max_value=150, value=1, step=1, key="days_ahead",help="The longer periods less accurate predictions")
+        col2.number_input("Batch size", min_value=5, max_value=60, value=30, step=1, key="batch_size",help="more stable predictions with higher batch size")
+        col2.number_input("Days ahead", min_value=5, max_value=150, value=30, step=1, key="days_ahead",help="The longer periods less accurate predictions")
         if st.form_submit_button("Submit", on_click=modeling):
             st.session_state.preds, st.session_state.days_ahead_prices = modeling()
     if st.session_state.preds is not None:
@@ -173,3 +173,30 @@ with tab2:
             st.table(st.session_state.days_ahead_prices)
 
 st.sidebar.button("clear cache",on_click=lambda:st.cache_data.clear())
+
+with tab3:
+    with st.form("env_form"):
+        st.header("Environment",divider="grey")
+        col1,col2=st.columns(2)
+        st.multiselect("Select the models",
+                       ["Linear Regression", "Support Vector Regression", "Decision Tree Regression",
+                        "KNeighbors Regression","Extra Trees Regression","HistGradientBoosting Regression", "MLPRegressor"],
+                       default=["Linear Regression"], key="env")
+        if col2.checkbox("Use Seed?"):
+            col1.number_input("Seed",min_value=1,value=42,key="tab3_seed")
+        st.form_submit_button("Submit")
+
+    if st.session_state.env:
+        df=pd.DataFrame()
+        for model in st.session_state.env:
+            del st.session_state.model
+            st.session_state.model=model
+            st.session_state.preds, st.session_state.days_ahead_prices = modeling()
+            df[model]=st.session_state.days_ahead_prices
+        if df is not None:
+            ex=st.expander("Prediction")
+            ex.table(df)
+            fig=go.Figure()
+            for i in df.columns:
+                fig.add_trace(go.Scatter(x=df.index,y=df[i],mode="lines",name=i))
+            st.plotly_chart(fig)
