@@ -10,6 +10,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.linear_model import Ridge,ElasticNet
 import seaborn as sb
 import numpy as np
 import plotly.graph_objects as go
@@ -88,6 +89,10 @@ def modeling():
             final_model = ExtraTreesRegressor()
         elif model_input == "HistGradientBoosting Regression":
             final_model = HistGradientBoostingRegressor()
+        elif model_input == "Ridge":
+            final_model = Ridge()
+        elif model_input == "ElasticNet":
+            final_model = ElasticNet()
         elif model_input == "MLPRegressor":
             final_model = MLPRegressor()
         else:
@@ -144,7 +149,7 @@ with tab2:
         col1, col2 = st.columns(2)
         col1.selectbox("Select Model", ["Linear Regression", "Support Vector Regression", "Decision Tree Regression",
                                         "KNeighbors Regression","Extra Trees Regression",
-                                        "HistGradientBoosting Regression", "MLPRegressor"],
+                                        "HistGradientBoosting Regression", "MLPRegressor","Ridge","ElasticNet"],
                        key="model")
         col2.number_input("Batch size", min_value=5, max_value=60, value=30, step=1, key="batch_size",help="more stable predictions with higher batch size")
         col2.number_input("Days ahead", min_value=5, max_value=150, value=30, step=1, key="days_ahead",help="The longer periods less accurate predictions")
@@ -179,7 +184,7 @@ with tab3:
         st.header("Environment",divider="grey")
         col1,col2=st.columns(2)
         st.multiselect("Select the models",
-                       ["Linear Regression", "Support Vector Regression", "Decision Tree Regression",
+                       ["Linear Regression", "Support Vector Regression", "Decision Tree Regression","Ridge","ElasticNet",
                         "KNeighbors Regression","Extra Trees Regression","HistGradientBoosting Regression", "MLPRegressor"],
                        default=["Linear Regression"], key="env")
         if col2.checkbox("Use Seed?"):
@@ -195,6 +200,7 @@ with tab3:
             df[model]=st.session_state.days_ahead_prices
         if df is not None:
             ex=st.expander("Prediction")
+            df["mean"]=df.mean(axis=1)
             ex.table(df)
             fig=go.Figure()
             for i in df.columns:
