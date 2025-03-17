@@ -26,7 +26,7 @@ if any(i not in keys for i in
     st.session_state.pred_center = 2
     st.session_state.xdata = None
     st.session_state.xy = None
-    st.session_state.model = None
+    st.session_state.model = "KMeans"
     st.session_state.centers = 2
     st.session_state.centers_std = 1
     st.session_state.seed = 42
