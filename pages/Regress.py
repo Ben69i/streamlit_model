@@ -151,24 +151,25 @@ with tab2:
         if st.form_submit_button("Submit", on_click=modeling):
             st.session_state.preds, st.session_state.days_ahead_prices = modeling()
     if st.session_state.preds is not None:
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=st.session_state.data.index,y=st.session_state.data["Mid"], mode="lines",
-                                 name=f"{st.session_state.ticker}"))
-        fig.add_trace(
-            go.Scatter(x=st.session_state.preds.index,y=st.session_state.preds.preds, mode="lines", name="Validation"))
+        with st.spinner("Plotting..."):
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=st.session_state.data.index,y=st.session_state.data["Mid"], mode="lines",
+                                     name=f"{st.session_state.ticker}"))
+            fig.add_trace(
+                go.Scatter(x=st.session_state.preds.index,y=st.session_state.preds.preds, mode="lines", name="Validation"))
 
-        fig.add_trace(
-            go.Scatter(x=st.session_state.days_ahead_prices.index,y=st.session_state.days_ahead_prices[0], mode="lines",
-                       name="Future Predictions", line=dict(color='cyan', width=3)))
-        fig.update_layout(
-            title=f"Data for {st.session_state.get('ticker', 'Unknown')}",
-            xaxis_title="Time",
-            yaxis_title="Price",
-            template="plotly_white",
-            showlegend=True,
-            hovermode="x unified",
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
-        st.plotly_chart(fig, use_container_width=True)
-        st.table(st.session_state.days_ahead_prices)
+            fig.add_trace(
+                go.Scatter(x=st.session_state.days_ahead_prices.index,y=st.session_state.days_ahead_prices[0], mode="lines",
+                           name="Future Predictions", line=dict(color='cyan', width=3)))
+            fig.update_layout(
+                title=f"Data for {st.session_state.get('ticker', 'Unknown')}",
+                xaxis_title="Time",
+                yaxis_title="Price",
+                template="plotly_white",
+                showlegend=True,
+                hovermode="x unified",
+                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
+            st.plotly_chart(fig, use_container_width=True)
+            st.table(st.session_state.days_ahead_prices)
 
 st.sidebar.button("clear cache",on_click=lambda:st.cache_data.clear())
