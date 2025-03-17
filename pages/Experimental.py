@@ -7,14 +7,9 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 import pickle, os
 from yellowbrick.cluster import KElbowVisualizer
-
 from pages.Regress import modeling
 
 sb.set()
-st.set_page_config(
-    page_title="Experimental",
-    page_icon="🧪"
-)
 
 
 keys = st.session_state.keys()
