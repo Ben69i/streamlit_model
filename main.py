@@ -50,7 +50,7 @@ if all(i not in keys for i in ["n_samples","data_preprocessing","n_features","ce
     st.session_state.lock_seed=True
     st.session_state.data_preprocessing=None
 col1,col2=st.columns(2)
-col2.image("./logo.jpeg",width=150)
+col2.image("./idiot.jpeg",width=200)
 if col2.button("Click MeeeeeeeEEEE",on_click=lambda:rain(emoji="🍗🍔",font_size=80,animation_length=1,falling_speed=6),type="primary"):
     col2.text("You clicked me")
 if st.button("Go to experimental",type="secondary"):
