@@ -5,9 +5,13 @@ import seaborn as sb
 import sklearn
 from sklearn.model_selection import train_test_split
 import pandas as pd
-import pickle, os
-from yellowbrick.cluster import KElbowVisualizer
+import pickle
 from pages.Regress import modeling
+
+try:
+    from yellowbrick.cluster import KElbowVisualizer
+except Exception as e:
+    st.error("Please install yellowbrick")
 
 sb.set()
 
@@ -20,8 +24,8 @@ if any(i not in keys for i in
     st.session_state.n_features = 5
     st.session_state.xcenters = 2
     st.session_state.pred_center = 2
-    st.session_state.xdata = 2
-    st.session_state.xy = 2
+    st.session_state.xdata = None
+    st.session_state.xy = None
     st.session_state.model = None
     st.session_state.centers = 2
     st.session_state.centers_std = 1
@@ -123,7 +127,7 @@ def model_train():
             st.pyplot(fig, clear_figure=True, use_container_width=True)
             plt.clf()
         except Exception as e:
-            st.error(e)
+            st.error("KElbow failed.")
     col2.download_button("Download model", data=pickle.dumps(m), file_name=f"{model_input}.pkl", mime="application/octet-stream")
     return x_test, preds, center
 
@@ -150,7 +154,7 @@ with Tab1:
 
         if st.form_submit_button(type="secondary"):
             st.session_state.xdata, st.session_state.xy, st.session_state.xcenters = generate_df()
-    if st.session_state.data_preprocessing is not None:
+    if st.session_state.xdata is not None and st.session_state.xy is not None:
         st.pyplot(fig=poof(st.session_state.xdata, st.session_state.xy, st.session_state.xcenters))
 
 with Tab2:
@@ -164,7 +168,7 @@ with Tab2:
         col2.number_input("pred_centers", key="pred_center", value=2)
 
         st.form_submit_button(type="secondary")
-    if st.session_state.data_preprocessing is not None:
+    if st.session_state.xdata is not None and st.session_state.xy is not None:
         st.pyplot(fig=poof(*model_train()))
 
 st.sidebar.button("clear cache",on_click=lambda:st.cache_data.clear())
