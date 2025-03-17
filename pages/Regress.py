@@ -21,6 +21,7 @@ sb.set(style="darkgrid")
 
 st.set_page_config(
     page_title="Regression",
+    layout="centered",
 )
 
 if any(key not in st.session_state.keys() for key in ["preds","ticker","data","batch_size","tab3_seed"]):
