@@ -48,6 +48,7 @@ options = {
     "BTC-USD": "₿ BTC",
     "ETH-USD": "💎 ETH",
     "XRP-USD": "⚡ XRP",
+    "XMR-USD": "Ⓜ️ XMR",
     "LTC-USD": "🌕 LTC",
     "DOGE-USD": "🐕 DOGE",
     "DOT-USD": "🌐 DOT",
